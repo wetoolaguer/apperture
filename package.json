@@ -1,0 +1,23 @@
+{
+  "name": "apperture",
+  "version": "0.0.0",
+  "description": "A webpage imaging and design diff tool.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "dependencies": {
+    "phantom":"*",    
+    "async":"*"
+  },
+  "keywords": [
+    "Page",
+    "Webpage",
+    "Diff",
+    "Design"
+  ],
+  "author": "Weto Olaguer",
+  "license": "MIT",
+  "gitHead": "fdfab0c646f9d14d9a3e66c2274c3a640ce41d38"
+}

@@ -1,12 +1,10 @@
 var config = require('./config.js');
-var Shutter = require('./shutter.js');
+var Camera = require('./camera.js');
 var DiffRobot = require('./diffRobot.js');
 
 function App (config) {
-    var shutter = new Shutter();
+    var camera = new Camera(config.browsers);
     var diffRobot = new DiffRobot();
-
-    phantom.exit();
 }
 
 new App(config);
