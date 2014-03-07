@@ -1,7 +1,8 @@
 var AppEvents = {
     CAPTURED :"captured",
     IMAGE_SAVED:"imageSaved",
-    BROWSER_FAILED_OPEN:"browserFailedOpen"
+    BROWSER_OPEN_FAILED:"browserOpenFailed",
+    BROWSER_CLOSED:"browserClosed"
 };
 
 module.exports = AppEvents;
