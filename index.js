@@ -1,15 +1,16 @@
-var config = require('./config.js');
 var Camera = require('./camera.js');
 var DiffRobot = require('./diffRobot.js');
 var AppEvents = require('./app_events');
+var BrowserManager = require('./browser_manager');
 
-function App (config) {
+function App () {
     var ports = [
-        9999, 9998, 9997, 9996, 9995, 9994, 9993, 9992 
+        9999, 9998, 9997, 9996, 9995, 9994, 9993 
     ];
 
-    var camera = new Camera("", "baseImgs/", ports);
+    var camera = new Camera("", null, null, ports);
     var diffRobot = new DiffRobot();
+    var browserManager = new BrowserManager(null, "", { width: 1024, height: 768 });
 
     var urls = [
         "http://localhost:3000/subscription",
@@ -21,10 +22,11 @@ function App (config) {
         "http://localhost:3000/about"
     ];
 
-    camera.capture(urls);
-    camera.on(AppEvents.BROWSER_CLOSED, function (port) {
-        console.log( "Closed port: " + port);
+    browserManager.spinBrowsers(ports);
+
+    browserManager.on(AppEvents.BROWSER_RELEASED, function (browsers) {
+        camera.capture(urls, browsers);
     });
 }
 
-new App(config);
+new App();
