@@ -40,6 +40,9 @@ Camera.prototype.capture = function (urls, browsers, size) {
     var self = this;
     var browserScreenSize = size || this.screenSize;
     var browserCount = browsers.length; 
+    
+    //dubplicate browsers to release it after
+    var browsersCopy = browsers.slice(0);
 
     var workArr = distributeWorkload(browserCount, urls);
 
@@ -52,11 +55,11 @@ Camera.prototype.capture = function (urls, browsers, size) {
                 callback();
             });
         }, function (err) {
-            self.emit(AppEvents.BROWSER_RELEASED, browser);
+            callback();
         });
 
     }, function (err) {
-        //works iteration done
+        self.emit(AppEvents.BROWSERSET_RELEASED, browsersCopy); 
     });
 };
 

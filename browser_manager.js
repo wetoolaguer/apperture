@@ -51,10 +51,10 @@ BrowserManager.prototype.createBrowser = function (switches, port, callback) {
 };
 
 BrowserManager.prototype.releaseBrowserSet = function (browsers) {
-    this.emit(AppEvents.BROWSER_RELEASED, browsers);
+    this.emit(AppEvents.BROWSERSET_RELEASED, browsers);
 };
 
-BrowserManager.prototype.retrieveBrowser = function () {
+BrowserManager.prototype.reclaimBrowsers = function (browsers) {
 };
 
 module.exports = BrowserManager;

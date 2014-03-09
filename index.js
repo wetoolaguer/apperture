@@ -24,8 +24,13 @@ function App () {
 
     browserManager.spinBrowsers(ports);
 
-    browserManager.on(AppEvents.BROWSER_RELEASED, function (browsers) {
+    browserManager.on(AppEvents.BROWSERSET_RELEASED, function (browsers) {
         camera.capture(urls, browsers);
+    });
+
+    camera.on(AppEvents.BROWSERSET_RELEASED, function (browsers) {
+        console.log("Releasing: ");
+        browserManager.reclaimBrowsers(browsers);
     });
 }
 
