@@ -9,6 +9,9 @@ function DiffRobot (baseImgDir, newImgDir) {
     init();
 }
 
+DiffRobot.prototyp.watchForDiffFiles = function () {
+};
+
 DiffRobot.prototype.diffImage = function (image1, image2) {
 };
 

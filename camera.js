@@ -25,13 +25,12 @@ var distributeWorkload = function (browserCount, urls) {
 };
 
 //Camera class
-var Camera = function (switches, screenSize, imgDir, ports) {
+var Camera = function (screenSize, imgDir) {
     var self = this;
 
     this.browsers = [];
     this.screenSize = screenSize || { width: 1280, height: 720 } ;
     this.imgDir = imgDir || 'baseImgs/';
-    this.ports = ports || [9999];
 };
 
 util.inherits(Camera, events.EventEmitter);
@@ -55,11 +54,11 @@ Camera.prototype.capture = function (urls, browsers, size) {
                 callback();
             });
         }, function (err) {
+            self.emit(AppEvents.BROWSER_RELEASED, browser); 
             callback();
         });
 
     }, function (err) {
-        self.emit(AppEvents.BROWSERSET_RELEASED, browsersCopy); 
     });
 };
 

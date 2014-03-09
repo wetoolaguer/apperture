@@ -4,13 +4,16 @@ var AppEvents = require('./app_events');
 var BrowserManager = require('./browser_manager');
 
 function App () {
-    var ports = [
-        9999, 9998, 9997, 9996, 9995, 9994, 9993 
+    var cameraPorts = [
+        9999, 9998, 9997 
     ];
 
-    var camera = new Camera("", null, null, ports);
+    var diffPort = [
+        9992
+    ];
+    var camera = new Camera();
     var diffRobot = new DiffRobot();
-    var browserManager = new BrowserManager(null, "", { width: 1024, height: 768 });
+    var browserManager = new BrowserManager(cameraPorts, "--ignore-ssl-errors=true");
 
     var urls = [
         "http://localhost:3000/subscription",
@@ -22,15 +25,18 @@ function App () {
         "http://localhost:3000/about"
     ];
 
-    browserManager.spinBrowsers(ports);
-
-    browserManager.on(AppEvents.BROWSERSET_RELEASED, function (browsers) {
+    browserManager.spinBrowsers(null, null, function (browsers) {
         camera.capture(urls, browsers);
     });
 
-    camera.on(AppEvents.BROWSERSET_RELEASED, function (browsers) {
+    browserManager.spinBrowsers(diffPort, '', function () {
+        
+    });
+
+    camera.on(AppEvents.BROWSER_RELEASED, function(browser) {
         console.log("Releasing: ");
-        browserManager.reclaimBrowsers(browsers);
+        console.log(browser);
+        browserManager.reclaimBrowser(browser);
     });
 }
 

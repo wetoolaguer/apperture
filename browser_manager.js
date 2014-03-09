@@ -5,15 +5,13 @@ var async = require('async');
 var events = require('events');
 
 var BrowserManager = function (ports, switches) {
-    this.browsers = [];
-
     this.ports = ports || 9999;
     this.switches = switches || "";
 };
 
 util.inherits(BrowserManager, events.EventEmitter);
 
-BrowserManager.prototype.spinBrowsers = function (ports, switches) {
+BrowserManager.prototype.spinBrowsers = function (ports, switches, callback) {
     var self = this;
     var browserSet = [];
     var capturePorts = ports || this.ports;
@@ -23,13 +21,12 @@ BrowserManager.prototype.spinBrowsers = function (ports, switches) {
         var portObj = { port : port };
 
         self.createBrowser(captureSwitches, portObj, function(browser) {
-            self.browsers.push(browser);
             browserSet.push(browser);
             callback();
         });
 
     }, function (err) {
-        self.releaseBrowserSet(browserSet);
+        callback(browserSet);
     });
 };
 
@@ -39,7 +36,6 @@ BrowserManager.prototype.createBrowser = function (switches, port, callback) {
     //We need to do the following expressions
     //because the count of switches is arbitrary
     var createCallback = function (browser) {
-        self.browsers.push(browser);
         callback(browser);
     };
 
@@ -50,11 +46,8 @@ BrowserManager.prototype.createBrowser = function (switches, port, callback) {
     phantom.create.apply(self, createArgs);
 };
 
-BrowserManager.prototype.releaseBrowserSet = function (browsers) {
-    this.emit(AppEvents.BROWSERSET_RELEASED, browsers);
-};
-
-BrowserManager.prototype.reclaimBrowsers = function (browsers) {
+BrowserManager.prototype.reclaimBrowser = function (browser) {
+    browser.exit();
 };
 
 module.exports = BrowserManager;
