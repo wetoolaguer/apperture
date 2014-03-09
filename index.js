@@ -11,6 +11,7 @@ function App () {
     var diffPort = [
         9992
     ];
+
     var camera = new Camera();
     var diffRobot = new DiffRobot();
     var browserManager = new BrowserManager(cameraPorts, "--ignore-ssl-errors=true");
@@ -25,17 +26,15 @@ function App () {
         "http://localhost:3000/about"
     ];
 
-    browserManager.spinBrowsers(null, null, function (browsers) {
-        camera.capture(urls, browsers);
-    });
+    //browserManager.spinBrowsers(null, null, function (browsers) {
+        //camera.capture(urls, browsers);
+    //});
 
-    browserManager.spinBrowsers(diffPort, '', function () {
-        
+    browserManager.spinBrowsers(diffPort, "--local-to-remote-url-access=true", function (browsers) {
+        diffRobot.diffImage("first.png","second.png", browsers[0]);    
     });
 
     camera.on(AppEvents.BROWSER_RELEASED, function(browser) {
-        console.log("Releasing: ");
-        console.log(browser);
         browserManager.reclaimBrowser(browser);
     });
 }
