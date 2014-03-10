@@ -1,14 +1,10 @@
 var path = require('path');
+var connect = requrie('connect');
 
 function DiffRobot (baseImgDir, newImgDir) {
     this.baseImgDir = baseImgDir || 'baseImgs';
     this.newImgDir = newImgDir || 'newImgDir';
-
-    var init = function () {
-        console.log("DiffRobot created.");
-    };
-    
-    init();
+    this.server = connect().use(connect.static('test_server'));
 }
 
 DiffRobot.prototype.addToQue = function (filename) {
@@ -46,20 +42,11 @@ DiffRobot.prototype.diffImage = function (image1, image2, browser) {
             console.log('starting');
         });
 
-        var content = ['<html><body>', 
-        '<canvas id="base-canvas" style="display:none;"></canvas>',
-        '<canvas id="new-canvas" style="display:none;"></canvas>',
-        '<canvas id="diff-canvas"></canvas>',
-        '<script type="text/javascript" src="/temp/diff.js"></script>',
-        '<img src="google.png" />',
-        '</body></html>'].join('\n');
-        tab.set('content', content, function() {
-            //tab.evaluate(function (image1Dir, image2Dir) {
-                //console.log(image1Dir);
-                //console.log(image2Dir);
-            //}, function(err) {
-            //}, image1Dir, image2Dir);
-        });
+        tab.evaluate(function (image1Dir, image2Dir) {
+            console.log(image1Dir);
+            console.log(image2Dir);
+        }, function(err) {
+        }, image1Dir, image2Dir);
 
     });
 };
