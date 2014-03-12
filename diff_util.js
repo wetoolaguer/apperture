@@ -13,6 +13,8 @@ var DiffUtil = function(baseCanvas, newCanvas, diffCanvas) {
     this.baseImage = new Image();
     this.newImage = new Image();
 
+    this.diffResult = false;
+
     var init = function (baseCanvas, newCanvas, diffCanvas) {
         self.baseCanvas = document.getElementById(baseCanvas);
         self.newCanvas = document.getElementById(newCanvas);
@@ -35,6 +37,11 @@ DiffUtil.prototype.diff = function (baseImage, newImage) {
     var self = this;
 
     function diffImageData (firstVal, secondVal) {
+        //set this.diffResult
+        if (!self.diffResult) {
+            self.diffResult = true;
+        }
+
         return firstVal === secondVal;
     }
 
@@ -100,8 +107,7 @@ DiffUtil.prototype.diff = function (baseImage, newImage) {
                 //}
             }
         }
+
+        return self.diffResult;
     };
 };
-
-var diff = new DiffUtil("base-canvas","new-canvas","diff-canvas"); 
-diff.diff("google.png","google2.png");

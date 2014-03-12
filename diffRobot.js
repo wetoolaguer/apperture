@@ -1,13 +1,17 @@
 var path = require('path');
 var connect = requrie('connect');
 
-function DiffRobot (baseImgDir, newImgDir) {
+var DiffRobot = function (baseImgDir, newImgDir) {
     this.baseImgDir = baseImgDir || 'baseImgs';
     this.newImgDir = newImgDir || 'newImgDir';
     this.server = connect().use(connect.static('test_server'));
-}
+};
 
 DiffRobot.prototype.addToQue = function (filename) {
+};
+
+DiffRobot.prototype.captureDiff = function (camera) {
+    camera.capture ();
 };
 
 DiffRobot.prototype.diffImage = function (image1, image2, browser) {
@@ -43,9 +47,11 @@ DiffRobot.prototype.diffImage = function (image1, image2, browser) {
         });
 
         tab.evaluate(function (image1Dir, image2Dir) {
-            console.log(image1Dir);
-            console.log(image2Dir);
-        }, function(err) {
+            var diffUtil = new DiffUtil("base-canvas","new-canvas","diff-canvas"); 
+            var diffResult = diffUtil.diff(image1Dir,image2Dir);
+
+            return diffResult;
+        }, function(result) {
         }, image1Dir, image2Dir);
 
     });
