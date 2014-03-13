@@ -1,17 +1,41 @@
 var path = require('path');
 var connect = requrie('connect');
 
-var DiffRobot = function (baseImgDir, newImgDir) {
+var DiffRobot = function (baseImgDir, newImgDir, camera) {
     this.baseImgDir = baseImgDir || 'baseImgs';
     this.newImgDir = newImgDir || 'newImgDir';
     this.server = connect().use(connect.static('test_server'));
+    this.que = [];
+    this.camera = camera;
+    this.watchIntervalObject = null;
+
+    var init = function () {
+        this.watchQue();
+    };
+
+    init();
+};
+
+DiffRobot.prototype.watchQue = function () {
+    if (!(this.watchIntervalObject)) {
+        this.watchIntervalObject = setInterval(function() {
+            console.log('watching');
+        }, 0.5); 
+    }
+};
+
+DiffRobot.prototype.unWatchQue = function () {
+    if (this.watchIntervalObject._idleTimeout > -1) {
+        clearInterval(this.watchInterval);
+    }
 };
 
 DiffRobot.prototype.addToQue = function (filename) {
+    this.que.push(filename);    
 };
 
-DiffRobot.prototype.captureDiff = function (camera) {
-    camera.capture ();
+DiffRobot.prototype.captureDiff = function (url, browser, filename, size, callback) {
+    this.camera.capture (url, browser, filename, size, callback);
 };
 
 DiffRobot.prototype.diffImage = function (image1, image2, browser) {
@@ -55,12 +79,6 @@ DiffRobot.prototype.diffImage = function (image1, image2, browser) {
         }, image1Dir, image2Dir);
 
     });
-};
-
-DiffRobot.prototype.drawDiffImage = function () {
-}; 
-
-DiffRobot.prototype.saveImageDiff = function (fileName) {
 };
 
 module.exports = DiffRobot;

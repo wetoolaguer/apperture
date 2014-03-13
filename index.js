@@ -37,6 +37,11 @@ function App () {
     camera.on(AppEvents.BROWSER_RELEASED, function(browser) {
         browserManager.reclaimBrowser(browser);
     });
+
+    camera.on(AppEvents.CAPTURED, function (filename, url) {
+        diffRobot.addToQue(filename);
+    });
+
 }
 
 new App();
