@@ -7,7 +7,7 @@ var DiffRobot = function (baseImgDir, newImgDir, camera) {
     this.server = connect().use(connect.static('test_server'));
     this.que = [];
     this.camera = camera;
-    this.watchIntervalObject = null;
+    this.lastInQue = "";
 
     var init = function () {
         this.watchQue();
@@ -16,21 +16,22 @@ var DiffRobot = function (baseImgDir, newImgDir, camera) {
     init();
 };
 
-DiffRobot.prototype.watchQue = function () {
-    if (!(this.watchIntervalObject)) {
-        this.watchIntervalObject = setInterval(function() {
-            console.log('watching');
-        }, 0.5); 
-    }
+DiffRobot.prototype.watchQue = function (callback) {
+    var watchLoop = setInterval(function() {
+        if (this.que.length > 0) {
+            clearInterval (watchLoop);
+            callback();
+        }
+
+        console.log('watching for files');
+    }, 500); 
 };
 
-DiffRobot.prototype.unWatchQue = function () {
-    if (this.watchIntervalObject._idleTimeout > -1) {
-        clearInterval(this.watchInterval);
+DiffRobot.prototype.addToQue = function (filename, last) {
+    if (last) {
+        this.lastInQue = filename;
     }
-};
 
-DiffRobot.prototype.addToQue = function (filename) {
     this.que.push(filename);    
 };
 
