@@ -1,30 +1,61 @@
 var path = require('path');
 var connect = requrie('connect');
 
-var DiffRobot = function (baseImgDir, newImgDir, camera) {
+var DiffRobot = function (baseImgDir, newImgDir, browser, camera) {
     this.baseImgDir = baseImgDir || 'baseImgs';
     this.newImgDir = newImgDir || 'newImgDir';
     this.server = connect().use(connect.static('test_server'));
     this.que = [];
     this.camera = camera;
+    this.browser = browser;
     this.lastInQue = "";
+    this.readyForCycle = true;
+    this.watchLoop = null;
 
     var init = function () {
-        this.watchQue();
+        this.initDiffCycle();
     };
 
     init();
 };
 
-DiffRobot.prototype.watchQue = function (callback) {
-    var watchLoop = setInterval(function() {
-        if (this.que.length > 0) {
-            clearInterval (watchLoop);
-            callback();
-        }
+DiffRobot.prototype.initDiffCycle = function () {
+    var self = this;
 
-        console.log('watching for files');
-    }, 500); 
+    if (!(this.browser || this.camera)) {
+        throw new Error ('Browser or camera undefined.');
+    }
+
+    this.watchQue(function (file) {
+        //set to indicate that it's already in the cycle
+        this.readyForCycle = false;
+
+        self.diffImage (file, file, function (result) {
+            //capture the diff image if result is true
+            if (result) {
+
+            }
+        });
+    }); 
+};
+
+DiffRobot.prototype.watchQue = function (callback) {
+    var self = this;
+
+    if (!this.watchLoop || this.watchLoop === -1) {
+        self.watchLoop = setInterval(function() {
+            if (self.que.length > 0 && this.readyForCycle) {
+                callback(self.que.shift);
+            }
+            console.log('watching for files');
+        }, 500); 
+    }
+};
+
+DiffRobot.prototype.releaseWatchQue = function () {
+    if (this.watchLoop && this.watchLoop._idleTimeout > -1) {
+        clearInterval(this.watchLoop); 
+    }
 };
 
 DiffRobot.prototype.addToQue = function (filename, last) {
@@ -39,7 +70,7 @@ DiffRobot.prototype.captureDiff = function (url, browser, filename, size, callba
     this.camera.capture (url, browser, filename, size, callback);
 };
 
-DiffRobot.prototype.diffImage = function (image1, image2, browser) {
+DiffRobot.prototype.diffImage = function (image1, image2, browser, callback) {
     var self = this;
 
     browser.createPage(function(tab) {
@@ -77,6 +108,7 @@ DiffRobot.prototype.diffImage = function (image1, image2, browser) {
 
             return diffResult;
         }, function(result) {
+            callback(result);
         }, image1Dir, image2Dir);
 
     });

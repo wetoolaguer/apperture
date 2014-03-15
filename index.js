@@ -4,6 +4,8 @@ var AppEvents = require('./app_events');
 var BrowserManager = require('./browser_manager');
 
 function App () {
+    var self = this;
+
     var cameraPorts = [
         9999, 9998, 9997 
     ];
@@ -12,8 +14,9 @@ function App () {
         9992
     ];
 
-    var camera = new Camera();
-    var diffRobot = new DiffRobot();
+    this.camera = new Camera();
+    this.diffRobot = null;
+
     var browserManager = new BrowserManager(cameraPorts, "--ignore-ssl-errors=true");
 
     var urls = [
@@ -31,7 +34,7 @@ function App () {
     //});
 
     browserManager.spinBrowsers(diffPort, "--local-to-remote-url-access=true", function (browsers) {
-        diffRobot.diffImage("first.png","second.png", browsers[0]);    
+        self.diffRobot = new DiffRobot(null, null, browsers[0], camera);
     });
 
     camera.on(AppEvents.BROWSER_RELEASED, function(browser) {
